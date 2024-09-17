@@ -3,6 +3,7 @@
 from collections import Counter
 from datetime import datetime
 import inspect
+from functools import lru_cache
 import random
 import re
 
@@ -259,3 +260,114 @@ words = re.findall(r'\b\w+\b', text.lower())
 # Create a Counter object
 word_count = Counter(words)
 print(word_count)
+
+# Iterable Unpacking
+# selectively unpack parts of an iterable
+# Basic
+a, b, c = [1, 2, 3]
+# unpack part of an iterable while capturing the remaining elements using the * operator
+# ignore the middle elements, _ is used as a placeholder to ignore the middle elements
+first, *_, last = [1, 2, 3, 4]
+# first element and all remaining elements separately, you can use the *
+fst, *rest = [1, 2, 3, 4]
+# last element and capture the rest
+*fit, lst = [1, 2, 3, 4, 5]
+# splitting file path
+path = '/home/user/documents/file.txt'
+*directory, file = path.split('/')
+print(directory)
+
+
+# Handling Function Arguments
+def process_data(a, b, *args, **kwargs):
+    print(f"First two arguments: {a}, {b}")
+    print(f"Additional positional arguments: {args}")
+    print(f"Keyword arguments: {kwargs}")
+
+
+process_data(1, 2, 3, 4, 5, key1='value1', key2='value2')
+
+
+# Memoization is an optimization technique used to speed up programs by storing the results of expensive
+# function calls and reusing them when the same inputs occur again
+# lru_cache (Least Recently Used cache) decorator from the functools module
+# caches the results of a function,
+# subsequent calls with the same arguments,
+# return cached result instead of recomputing it
+# Parameters of lru_cache
+# maxsize: Specifies the maximum number of cached calls.
+# typed: If set to True, arguments of different types will be cached separately.
+# For example, f(3) and f(3.0) will be treated as distinct calls.
+@lru_cache(maxsize=None)
+def greet(name_to_greet, greeting="Hello"):
+    print(f"Generating greeting for {name_to_greet}")
+    return f"{greeting}, {name_to_greet}!"
+
+
+# Call the function with the same arguments
+print(greet("Alice"))  # Output: Generating greeting for Alice Hello, Alice!
+print(greet("Alice"))  # Output: Hello, Alice! (result is takan from the cache)
+print(greet("Alice", greeting="Hi"))  # Output: Generating greeting for Alice Hi, Alice!
+print(greet("Alice", greeting="Hi"))  # Output: Hi, Alice! (result is takan from the cache)
+# Clear the cache
+greet.cache_clear()
+
+
+#
+@lru_cache(maxsize=None)
+def fibonacci(n):
+    if n < 2:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+# Compute Fibonacci numbers
+print(fibonacci(10))  # Output: 55
+print(fibonacci(50))  # Output: 12586269025
+
+# Clear the cache
+fibonacci.cache_clear()
+
+# Ternary Operators
+# variable = value_if_true if condition else value_if_false
+# result = 'high' if score > 90 else 'medium' if score > 50 else 'low'
+# Find the maximum of two numbers, favoring the first if they are equal
+max_value = x if x >= y else y
+# Conditional logic within a list comprehension
+numbers = [x if x > 0 else 0 for x in range(-5, 6)]
+
+# List Slicing
+# list[start:stop:step]
+my_list = [1, 2, 3, 4, 5]
+reversed_list = my_list[::-1]
+print(reversed_list)
+my_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+skipped_list = my_list[::2]
+print(skipped_list)
+my_list = ['a', 'b', 'c', 'd', 'e', 'f']
+sublist = my_list[1:4]
+print(sublist)
+my_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+combined_slice = my_list[8:1:-2]
+print(combined_slice)
+
+# Example dataset
+data = [i for i in range(100)]
+train_data = data[:80]
+test_data = data[80:]
+print(len(train_data))
+print(len(test_data))
+
+# key does not exist
+# value = dictionary.get(key, default_value)
+# default_value: The value to return if the key is not found. If not specified, it defaults to None
+my_dict = {'a': 1, 'b': 2, 'c': 3}
+value = my_dict.get('a')
+key_not_found = my_dict.get('d', 'NA')
+# value = dictionary.setdefault(key, default_value)
+# initializing nested dictionaries or lists within dictionaries
+data = {}
+# Initialize nested dictionary if not present
+data.setdefault('user', {}).setdefault('preferences', {}).setdefault('theme', 'light')
+print(data)  # Output: {'user': {'preferences': {'theme': 'light'}}}
+
